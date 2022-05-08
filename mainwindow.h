@@ -5,6 +5,9 @@
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QShowEvent>
+
+class BottomButtonGroup;
 
 class MainWindow : public QMainWindow
 {
@@ -15,6 +18,7 @@ public:
     ~MainWindow() override;
 
 protected slots:
+    void showEvent(QShowEvent *event)              override;
     void mousePressEvent(QMouseEvent *event)       override;
     void mouseMoveEvent(QMouseEvent *event)        override;
     void mouseReleaseEvent(QMouseEvent *event)     override;
@@ -22,6 +26,7 @@ protected slots:
     void resizeEvent(QResizeEvent *event)          override;
 
     void closeWindow();
+    void updateWidgetsPosition();
 
 
 private:
@@ -30,6 +35,8 @@ private:
     QPropertyAnimation      *m_floatUpAnimation;
     QParallelAnimationGroup *m_exitAnimationGroup;
     QPushButton             *m_closeButton;
+
+    BottomButtonGroup       *m_bottomButtonGroup;
 
     bool                     m_clickedOnWindow = false;
 };

@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+
+#include "bottombuttongroup.h"
 #include "graphicsview.h"
 
 #include <QDebug>
@@ -52,10 +54,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_closeButton, &QPushButton::clicked,
             this, &MainWindow::closeWindow);
 
+    m_bottomButtonGroup = new BottomButtonGroup(this);
+
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    updateWidgetsPosition();
+    return QMainWindow::showEvent(event);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -96,7 +106,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    m_closeButton->move(width() - m_closeButton->width(), 0);
+    updateWidgetsPosition();
 
     return QMainWindow::resizeEvent(event);
 }
@@ -106,5 +116,12 @@ void MainWindow::closeWindow()
     m_floatUpAnimation->setStartValue(QRect(this->geometry().x(), this->geometry().y(), this->geometry().width(), this->geometry().height()));
     m_floatUpAnimation->setEndValue(QRect(this->geometry().x(), this->geometry().y()-80, this->geometry().width(), this->geometry().height()));
     m_exitAnimationGroup->start();
+}
+
+void MainWindow::updateWidgetsPosition()
+{
+    m_closeButton->move(width() - m_closeButton->width(), 0);
+    m_bottomButtonGroup->move((width() - m_bottomButtonGroup->width()) / 2,
+                              height() - m_bottomButtonGroup->height());
 }
 
