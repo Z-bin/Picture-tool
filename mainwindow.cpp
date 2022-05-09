@@ -2,10 +2,14 @@
 
 #include "bottombuttongroup.h"
 #include "graphicsview.h"
+#include "graphicsscene.h"
 
+#include <QScreen>
 #include <QDebug>
+#include <QStyle>
 #include <QMouseEvent>
 #include <QGraphicsScene>
+#include <QApplication>
 #include <QGraphicsTextItem>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,16 +36,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_exitAnimationGroup, &QParallelAnimationGroup::finished,
             this, &MainWindow::close);
 
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    QGraphicsTextItem *textItem = scene->addText("Hello, world!");
-    textItem->setDefaultTextColor(QColor("White"));
+    GraphicsScene *scene = new GraphicsScene(this);
 
-    GraphicsView *test = new GraphicsView(this);
-    test->setScene(scene);
-    this->setCentralWidget(test);
+    GraphicsView *pictureView = new GraphicsView(this);
+    pictureView->setScene(scene);
+    this->setCentralWidget(pictureView);
 
-
-    m_closeButton = new QPushButton(this);
+    m_closeButton = new QPushButton(pictureView);
     m_closeButton->setFlat(true);
     m_closeButton->setFixedSize(50, 50);
     m_closeButton->setStyleSheet("QPushButton {"
@@ -55,6 +56,15 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::closeWindow);
 
     m_bottomButtonGroup = new BottomButtonGroup(this);
+
+    this->setGeometry(
+        QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignCenter,
+            this->size(),
+            qApp->screenAt(QCursor::pos())->geometry()
+        )
+    );
 
 }
 

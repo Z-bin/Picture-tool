@@ -16,11 +16,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bottombuttongroup.cpp \
+    graphicsscene.cpp \
     graphicsview.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    bottombuttongroup.h \
+    graphicsscene.h \
     graphicsview.h \
     mainwindow.h
 
