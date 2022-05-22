@@ -15,6 +15,8 @@ GraphicsView::GraphicsView(QWidget *parent)
     setDragMode(QGraphicsView::ScrollHandDrag);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // 鼠标下方点作为改变视图大小的锚定点
+    setResizeAnchor(QGraphicsView::AnchorUnderMouse);
     setStyleSheet("background-color: rgba(0, 0, 0, 180);"
                   "border-radius: 3px;");
     setAcceptDrops(true);
@@ -22,7 +24,13 @@ GraphicsView::GraphicsView(QWidget *parent)
 
 void GraphicsView::showImage(const QPixmap &pixmap)
 {
+    resetTransform();
     scene()->showImage(pixmap);
+    if (!isThingSmallerThanWindowWith(transform())) {
+        m_enableFitInView = true;
+        // 保证图像适应窗口
+        fitInView(sceneRect(), Qt::KeepAspectRatio);
+    }
 }
 
 void GraphicsView::showText(const QString &text)
@@ -42,22 +50,18 @@ void GraphicsView::setScene(GraphicsScene *scene)
 
 void GraphicsView::mousePressEvent(QMouseEvent *event)
 {
-    QGraphicsItem *item = itemAt(event->pos());
-
-    if (!item) {
+    if (shouldIgnoreMousePressMoveEvent(event)) {
         event->ignore();
         // 在这里返回，否则如果我们设置一个 QGraphicsView::ScrollHandDrag 拖动模式，QMouseEvent 事件透明度将不起作用。
         return;
     }
 
-    qDebug() << item;
     return QGraphicsView::mousePressEvent(event);
 }
 
 void GraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-    QGraphicsItem *item = itemAt(event->pos());
-    if (!item) {
+    if (shouldIgnoreMousePressMoveEvent(event)) {
         event->ignore();
     }
 
@@ -76,11 +80,26 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent *event)
 
 void GraphicsView::wheelEvent(QWheelEvent *event)
 {
+    m_enableFitInView = false;
     if (event->delta() > 0) {
         scale(1.25, 1.25);
     } else {
         scale(0.8, 0.8);
     }
+}
+
+void GraphicsView::resizeEvent(QResizeEvent *event)
+{
+    if (m_enableFitInView) {
+
+        if (isThingSmallerThanWindowWith(QTransform()) && transform().m11() >= 1) {
+            // 当用户放大窗口时候，什么都不做
+        } else {
+            // 缩小窗口时候，仍旧保持图像适应窗口大小
+            fitInView(sceneRect(), Qt::KeepAspectRatio);
+        }
+    }
+    return QGraphicsView::resizeEvent(event);
 }
 
 void GraphicsView::dragEnterEvent(QDragEnterEvent *event)
@@ -131,5 +150,27 @@ void GraphicsView::dropEvent(QDropEvent *event)
         }
     } else if (mimeData->hasText()) {
         showText(mimeData->text());
+    } else {
+        showText("Not supported mimedata: " + mimeData->formats().first());
     }
+}
+
+bool GraphicsView::isThingSmallerThanWindowWith(const QTransform &transform) const
+{
+    return rect().size().expandedTo(transform.mapRect(sceneRect()).size().toSize())
+            == rect().size();
+}
+
+bool GraphicsView::shouldIgnoreMousePressMoveEvent(const QMouseEvent *event) const
+{
+    if (isThingSmallerThanWindowWith(transform())) {
+        return true;
+    }
+
+    QGraphicsItem *item = itemAt(event->pos());
+    if (!item) {
+        return true;
+    }
+
+    return false;
 }
