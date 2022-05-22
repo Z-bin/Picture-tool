@@ -17,7 +17,7 @@ GraphicsView::GraphicsView(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     // 鼠标下方点作为改变视图大小的锚定点
     setResizeAnchor(QGraphicsView::AnchorUnderMouse);
-    setStyleSheet("background-color: rgba(0, 0, 0, 180);"
+    setStyleSheet("background-color: rgba(0, 0, 0, 220);"
                   "border-radius: 3px;");
     setAcceptDrops(true);
 }

@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 设置为无边框
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
-    this->setMinimumSize(610, 410);
+    this->setMinimumSize(710, 530);
 
     // 与窗口透明度属性绑定
     m_fadeOutAnimation = new QPropertyAnimation(this, "windowOpacity");
