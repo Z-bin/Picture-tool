@@ -23,6 +23,33 @@ GraphicsView::GraphicsView(QWidget *parent)
     setCheckerboardEnabled(false);
 }
 
+void GraphicsView::showFromUrlList(const QList<QUrl> &urlList)
+{
+    // 拖动原始QQ图纸会触发此问题
+    if (urlList.isEmpty()) {
+        showText(tr("File url list is empty"));
+        qDebug() << Q_FUNC_INFO << "File url list is empty";
+        return;
+    }
+
+    QUrl url(urlList.first());
+    QString filePath(url.toLocalFile());
+
+    if (filePath.endsWith(".svg")) {
+        showSvg(filePath);
+    } else if (filePath.endsWith(".gif")) {
+        showGif(filePath);
+    } else {
+       QImageReader imageReader(filePath);
+       QImage::Format imageFormat = imageReader.imageFormat();
+       if (imageFormat == QImage::Format_Invalid) {
+           showText("File not is a valid image");
+       } else {
+           showImage(QPixmap::fromImageReader(&imageReader));
+       }
+    }
+}
+
 void GraphicsView::showImage(const QPixmap &pixmap)
 {
     resetTransform();
@@ -148,28 +175,7 @@ void GraphicsView::dropEvent(QDropEvent *event)
 
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
-        // 拖动原始QQ图纸会触发此问题
-        if (mimeData->urls().isEmpty()) {
-            qDebug() << Q_FUNC_INFO << "File url list is empty";
-            return;
-        }
-
-        QUrl url(mimeData->urls().first());
-        QString filePath(url.toLocalFile());
-
-        if (filePath.endsWith(".svg")) {
-            showSvg(filePath);
-        } else if (filePath.endsWith(".gif")) {
-            showGif(filePath);
-        } else {
-           QImageReader imageReader(filePath);
-           QImage::Format imageFormat = imageReader.imageFormat();
-           if (imageFormat == QImage::Format_Invalid) {
-               showText("File not is a valid image");
-           } else {
-               showImage(QPixmap::fromImageReader(&imageReader));
-           }
-        }
+        showFromUrlList(mimeData->urls());
     } else if (mimeData->hasImage()) {
         qDebug() << Q_FUNC_INFO << "this is image";
         QImage img = qvariant_cast<QImage>(mimeData->imageData());
