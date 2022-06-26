@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setMinimumSize(710, 530);
+    this->setWindowIcon(QIcon(":/icons/app-icon.svg"));
 
     // 与窗口透明度属性绑定
     m_fadeOutAnimation = new QPropertyAnimation(this, "windowOpacity");
@@ -86,6 +87,27 @@ void MainWindow::showUrls(const QList<QUrl> &urls)
     m_graphicsView->showFromUrlList(urls);
 }
 
+void MainWindow::adjustWindowSizeBySceneRect()
+{
+    // 如果通过调整resize来调整缩放
+    if (m_graphicsView->transform().m11() < 1) {
+        QSize screenSize = qApp->screenAt(QCursor::pos())->availableSize();
+        QSize sceneSize = m_graphicsView->sceneRect().toRect().size();
+        QSize sceneSizeWithMarigins = sceneSize + QSize(20, 20);
+        if (screenSize.expandedTo(sceneSize) == screenSize) {
+            // 通过增加窗口大小来显示图片(当图片大小小于窗口大小但是大于默认窗口大小时候)
+            if (screenSize.expandedTo(sceneSize) == screenSize) {
+                this->resize(sceneSizeWithMarigins);
+            } else {
+                this->resize(screenSize);
+            }
+            centerWindow();
+        } else {
+            showMaximized();
+        }
+    }
+}
+
 void MainWindow::showEvent(QShowEvent *event)
 {
     updateWidgetsPosition();
@@ -133,6 +155,18 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     updateWidgetsPosition();
 
     return QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::centerWindow()
+{
+    this->setGeometry(
+                QStyle::alignedRect(
+                    Qt::LeftToRight,
+                    Qt::AlignCenter,
+                    this->size(),
+                    qApp->screenAt(QCursor::pos())->geometry()
+                    )
+                );
 }
 
 void MainWindow::closeWindow()

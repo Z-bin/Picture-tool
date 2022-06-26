@@ -19,6 +19,7 @@ public:
     ~MainWindow() override;
 
     void showUrls(const QList<QUrl> &urls);
+    void adjustWindowSizeBySceneRect();
 
 protected slots:
     void showEvent(QShowEvent *event)              override;
@@ -28,6 +29,7 @@ protected slots:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event)          override;
 
+    void centerWindow();
     void closeWindow();
     void updateWidgetsPosition();
 
