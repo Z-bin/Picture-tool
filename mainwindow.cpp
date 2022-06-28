@@ -66,6 +66,12 @@ MainWindow::MainWindow(QWidget *parent)
             this, [=](){ m_graphicsView->scale(0.75, 0.75);});
     connect(m_bottomButtonGroup, &BottomButtonGroup::toggleCheckerboardBtnClicked,
             this, [=](){ m_graphicsView->toggleCheckerboard();});
+    connect(m_bottomButtonGroup, &BottomButtonGroup::rotateRightBtnClicked,
+            this, [=](){
+        m_graphicsView->rotate(90);
+        m_graphicsView->checkAndDoFitView();
+    });
+
 
     this->setGeometry(
         QStyle::alignedRect(

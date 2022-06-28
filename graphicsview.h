@@ -20,6 +20,8 @@ public:
     GraphicsScene * scene() const;
     void setScene(GraphicsScene *scene);
 
+    void checkAndDoFitView();
+
 public slots:
     void toggleCheckerboard();
 
@@ -40,7 +42,6 @@ private:
     bool isThingSmallerThanWindowWith(const QTransform &transform) const;
     bool shouldIgnoreMousePressMoveEvent(const QMouseEvent *event) const;
 
-    void checkAndDoFitView();
     void setCheckerboardEnabled(bool enabled);
 
     bool m_enableFitInView     = false;

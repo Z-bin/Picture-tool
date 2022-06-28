@@ -88,6 +88,15 @@ void GraphicsView::setScene(GraphicsScene *scene)
     return QGraphicsView::setScene(scene);
 }
 
+void GraphicsView::checkAndDoFitView()
+{
+    if (!isThingSmallerThanWindowWith(transform())) {
+        m_enableFitInView = true;
+        // 保证图像适应窗口
+        fitInView(sceneRect(), Qt::KeepAspectRatio);
+    }
+}
+
 void GraphicsView::toggleCheckerboard()
 {
     setCheckerboardEnabled(!m_checkerboardEnabled);
@@ -200,6 +209,11 @@ bool GraphicsView::isThingSmallerThanWindowWith(const QTransform &transform) con
 
 bool GraphicsView::shouldIgnoreMousePressMoveEvent(const QMouseEvent *event) const
 {
+    // 只是鼠标划过时候
+    if (event->buttons() == Qt::NoButton) {
+        return true;
+    }
+
     if (isThingSmallerThanWindowWith(transform())) {
         return true;
     }
@@ -210,15 +224,6 @@ bool GraphicsView::shouldIgnoreMousePressMoveEvent(const QMouseEvent *event) con
     }
 
     return false;
-}
-
-void GraphicsView::checkAndDoFitView()
-{
-    if (!isThingSmallerThanWindowWith(transform())) {
-        m_enableFitInView = true;
-        // 保证图像适应窗口
-        fitInView(sceneRect(), Qt::KeepAspectRatio);
-    }
 }
 
 void GraphicsView::setCheckerboardEnabled(bool enabled)
