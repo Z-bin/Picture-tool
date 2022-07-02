@@ -59,16 +59,17 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomButtonGroup = new BottomButtonGroup(this);
 
     connect(m_bottomButtonGroup, &BottomButtonGroup::resetToOriginalBtnClicked,
-            this, [=](){ m_graphicsView->setTransform(QTransform());});
+            this, [=](){ m_graphicsView->resetScale();});
     connect(m_bottomButtonGroup, &BottomButtonGroup::zoomInBtnClicked,
-            this, [=](){ m_graphicsView->scale(1.25, 1.25);});
+            this, [=](){ m_graphicsView->zoomView(1.25);});
     connect(m_bottomButtonGroup, &BottomButtonGroup::zoomOutBtnClicked,
-            this, [=](){ m_graphicsView->scale(0.75, 0.75);});
+            this, [=](){ m_graphicsView->zoomView(0.75);});
     connect(m_bottomButtonGroup, &BottomButtonGroup::toggleCheckerboardBtnClicked,
             this, [=](){ m_graphicsView->toggleCheckerboard();});
     connect(m_bottomButtonGroup, &BottomButtonGroup::rotateRightBtnClicked,
             this, [=](){
-        m_graphicsView->rotate(90);
+        m_graphicsView->resetScale();
+        m_graphicsView->rotateView(90);
         m_graphicsView->checkAndDoFitView();
     });
 
@@ -96,7 +97,7 @@ void MainWindow::showUrls(const QList<QUrl> &urls)
 void MainWindow::adjustWindowSizeBySceneRect()
 {
     // 如果通过调整resize来调整缩放
-    if (m_graphicsView->transform().m11() < 1) {
+    if (m_graphicsView->scaleFactor() < 1) {
         QSize screenSize = qApp->screenAt(QCursor::pos())->availableSize();
         QSize sceneSize = m_graphicsView->sceneRect().toRect().size();
         QSize sceneSizeWithMarigins = sceneSize + QSize(20, 20);

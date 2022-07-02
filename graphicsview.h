@@ -20,6 +20,13 @@ public:
     GraphicsScene * scene() const;
     void setScene(GraphicsScene *scene);
 
+    qreal scaleFactor() const;
+
+    void resetTransform();
+    void zoomView(qreal scaleFactor);
+    void resetScale();
+    void rotateView(qreal rotateAngle);
+
     void checkAndDoFitView();
 
 public slots:
@@ -44,8 +51,13 @@ private:
 
     void setCheckerboardEnabled(bool enabled);
 
+    void reapplyViewTransform();
+
     bool m_enableFitInView     = false;
     bool m_checkerboardEnabled = false;
+
+    qreal m_scaleFactor = 1;
+    qreal m_rotateAngle = 0;
 };
 
 #endif // GRAPHICSVIEW_H

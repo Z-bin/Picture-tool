@@ -88,6 +88,42 @@ void GraphicsView::setScene(GraphicsScene *scene)
     return QGraphicsView::setScene(scene);
 }
 
+qreal GraphicsView::scaleFactor() const
+{
+    int angle = static_cast<int>(m_rotateAngle);
+    if (angle == 0 || angle == 180) {
+        return qAbs(transform().m11());
+    } else {
+        return qAbs(transform().m12());
+    }
+}
+
+void GraphicsView::resetTransform()
+{
+    m_scaleFactor = 1;
+    m_rotateAngle = 0;
+    QGraphicsView::resetTransform();
+}
+
+void GraphicsView::zoomView(qreal scaleFactor)
+{
+   m_scaleFactor *= scaleFactor;
+   reapplyViewTransform();
+}
+
+void GraphicsView::resetScale()
+{
+    m_scaleFactor = 1;
+    reapplyViewTransform();
+}
+
+void GraphicsView::rotateView(qreal rotateAngle)
+{
+    m_rotateAngle += rotateAngle;
+    m_rotateAngle = static_cast<int>(m_rotateAngle) % 360;
+    reapplyViewTransform();
+}
+
 void GraphicsView::checkAndDoFitView()
 {
     if (!isThingSmallerThanWindowWith(transform())) {
@@ -136,17 +172,18 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 {
     m_enableFitInView = false;
     if (event->delta() > 0) {
-        scale(1.25, 1.25);
+        zoomView(1.25);
     } else {
-        scale(0.8, 0.8);
+        zoomView(0.8);
     }
 }
 
 void GraphicsView::resizeEvent(QResizeEvent *event)
 {
     if (m_enableFitInView) {
-
-        if (isThingSmallerThanWindowWith(QTransform()) && transform().m11() >= 1) {
+        QTransform tf;
+        tf.rotate(m_rotateAngle);
+        if (isThingSmallerThanWindowWith(QTransform(tf)) && scaleFactor() >= 1) {
             // 当用户放大窗口时候，什么都不做
         } else {
             // 缩小窗口时候，仍旧保持图像适应窗口大小
@@ -242,4 +279,11 @@ void GraphicsView::setCheckerboardEnabled(bool enabled)
     } else {
         setBackgroundBrush(Qt::transparent);
     }
+}
+
+void GraphicsView::reapplyViewTransform()
+{
+    QGraphicsView::resetTransform();
+    scale(m_scaleFactor, m_scaleFactor);
+    rotate(m_rotateAngle);
 }
