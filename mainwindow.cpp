@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     // 设置为无边框
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setMinimumSize(710, 530);
     this->setWindowIcon(QIcon(":/icons/app-icon.svg"));
