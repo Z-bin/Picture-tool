@@ -7,6 +7,7 @@
 class GraphicsScene;
 class GraphicsView : public QGraphicsView
 {
+    Q_OBJECT
 public:
     GraphicsView(QWidget *parent = nullptr);
 
@@ -27,7 +28,10 @@ public:
     void resetScale();
     void rotateView(qreal rotateAngle);
 
-    void checkAndDoFitView();
+    void checkAndDoFitInView();
+
+signals:
+   void navigatorViewRequired(bool required, qreal angle);
 
 public slots:
     void toggleCheckerboard();

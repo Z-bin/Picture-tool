@@ -20,13 +20,15 @@ SOURCES += \
     graphicsscene.cpp \
     graphicsview.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    navigatorview.cpp
 
 HEADERS += \
     bottombuttongroup.h \
     graphicsscene.h \
     graphicsview.h \
-    mainwindow.h
+    mainwindow.h \
+    navigatorview.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

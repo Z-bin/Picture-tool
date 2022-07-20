@@ -25,6 +25,7 @@ GraphicsView::GraphicsView(QWidget *parent)
 
 void GraphicsView::showFromUrlList(const QList<QUrl> &urlList)
 {
+    emit navigatorViewRequired(false, 0);
     // 拖动原始QQ图纸会触发此问题
     if (urlList.isEmpty()) {
         showText(tr("File url list is empty"));
@@ -54,28 +55,28 @@ void GraphicsView::showImage(const QPixmap &pixmap)
 {
     resetTransform();
     scene()->showImage(pixmap);
-    checkAndDoFitView();
+    checkAndDoFitInView();
 }
 
 void GraphicsView::showText(const QString &text)
 {
     resetTransform();
     scene()->showText(text);
-    checkAndDoFitView();
+    checkAndDoFitInView();
 }
 
 void GraphicsView::showSvg(const QString &filepath)
 {
     resetTransform();
     scene()->showSvg(filepath);
-    checkAndDoFitView();
+    checkAndDoFitInView();
 }
 
 void GraphicsView::showGif(const QString &filepath)
 {
     resetTransform();
     scene()->showGif(filepath);
-    checkAndDoFitView();
+    checkAndDoFitInView();
 }
 
 GraphicsScene *GraphicsView::scene() const
@@ -109,12 +110,14 @@ void GraphicsView::zoomView(qreal scaleFactor)
 {
    m_scaleFactor *= scaleFactor;
    reapplyViewTransform();
+   emit navigatorViewRequired(!isThingSmallerThanWindowWith(transform()), m_rotateAngle);
 }
 
 void GraphicsView::resetScale()
 {
     m_scaleFactor = 1;
     reapplyViewTransform();
+    emit navigatorViewRequired(!isThingSmallerThanWindowWith(transform()), m_rotateAngle);
 }
 
 void GraphicsView::rotateView(qreal rotateAngle)
@@ -124,7 +127,7 @@ void GraphicsView::rotateView(qreal rotateAngle)
     reapplyViewTransform();
 }
 
-void GraphicsView::checkAndDoFitView()
+void GraphicsView::checkAndDoFitInView()
 {
     if (!isThingSmallerThanWindowWith(transform())) {
         m_enableFitInView = true;
