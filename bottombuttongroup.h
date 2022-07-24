@@ -20,6 +20,7 @@ public:
 
 signals:
     void resetToOriginalBtnClicked();
+    void toggleWindowMaximum();
     void zoomInBtnClicked();
     void zoomOutBtnClicked();
     void toggleCheckerboardBtnClicked();

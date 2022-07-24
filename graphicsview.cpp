@@ -189,6 +189,9 @@ void GraphicsView::resizeEvent(QResizeEvent *event)
             // 缩小窗口时候，仍旧保持图像适应窗口大小
             fitInView(sceneRect(), Qt::KeepAspectRatio);
         }
+    } else {
+        // 是否显示缩略图
+        emit navigatorViewRequired(!isThingSmallerThanWindowWith(transform()), m_rotateAngle);
     }
     return QGraphicsView::resizeEvent(event);
 }
