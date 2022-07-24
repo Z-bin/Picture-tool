@@ -108,9 +108,10 @@ void GraphicsView::resetTransform()
 
 void GraphicsView::zoomView(qreal scaleFactor)
 {
-   m_scaleFactor *= scaleFactor;
-   reapplyViewTransform();
-   emit navigatorViewRequired(!isThingSmallerThanWindowWith(transform()), m_rotateAngle);
+    m_enableFitInView = false;
+    m_scaleFactor *= scaleFactor;
+    reapplyViewTransform();
+    emit navigatorViewRequired(!isThingSmallerThanWindowWith(transform()), m_rotateAngle);
 }
 
 void GraphicsView::resetScale()
@@ -173,12 +174,8 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent *event)
 
 void GraphicsView::wheelEvent(QWheelEvent *event)
 {
-    m_enableFitInView = false;
-    if (event->delta() > 0) {
-        zoomView(1.25);
-    } else {
-        zoomView(0.8);
-    }
+    event->ignore();
+    return QGraphicsView::wheelEvent(event);
 }
 
 void GraphicsView::resizeEvent(QResizeEvent *event)
@@ -239,6 +236,14 @@ void GraphicsView::dropEvent(QDropEvent *event)
     } else {
         showText("Not supported mimedata: " + mimeData->formats().first());
     }
+}
+
+void GraphicsView::paintEvent(QPaintEvent *event)
+{
+    if (event->rect() == this->rect() && !isThingSmallerThanWindowWith(transform())) {
+        emit viewportRectChanged();
+    }
+    return QGraphicsView::paintEvent(event);
 }
 
 bool GraphicsView::isThingSmallerThanWindowWith(const QTransform &transform) const

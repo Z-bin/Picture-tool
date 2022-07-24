@@ -32,6 +32,7 @@ public:
 
 signals:
    void navigatorViewRequired(bool required, qreal angle);
+   void viewportRectChanged();
 
 public slots:
     void toggleCheckerboard();
@@ -46,6 +47,8 @@ private:
     void dragEnterEvent(QDragEnterEvent *event)   override;
     void dragMoveEvent(QDragMoveEvent *event)     override;
     void dropEvent(QDropEvent *event)             override;
+
+    void paintEvent(QPaintEvent *event)           override;
 
     /*!
      * @brief 图片是否大于窗口大小
