@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QGraphicsTextItem>
 #include <QGraphicsOpacityEffect>
+#include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -242,6 +243,23 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     return QMainWindow::resizeEvent(event);
 }
 
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu *menu = new QMenu;
+    QAction *protectMode = new QAction(tr("Protected mode"));
+    connect(protectMode, &QAction::triggered, this, [=](){
+       toggleProtectMode();
+    });
+
+    protectMode->setCheckable(true);
+    protectMode->setChecked(m_protectMode);
+    menu->addAction(protectMode);
+    menu->exec(mapToGlobal(event->pos()));
+    menu->deleteLater();
+
+    return QMainWindow::contextMenuEvent(event);
+}
+
 void MainWindow::centerWindow()
 {
     this->setGeometry(
@@ -267,5 +285,11 @@ void MainWindow::updateWidgetsPosition()
     m_bottomButtonGroup->move((width() - m_bottomButtonGroup->width()) / 2,
                               height() - m_bottomButtonGroup->height());
     m_gv->move(width() - m_gv->width(), height() - m_gv->height());
+}
+
+void MainWindow::toggleProtectMode()
+{
+    m_protectMode = !m_protectMode;
+    m_closeButton->setVisible(!m_protectMode);
 }
 

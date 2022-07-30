@@ -7,7 +7,6 @@
 #include <QPushButton>
 #include <QShowEvent>
 
-
 QT_BEGIN_NAMESPACE
 class QGraphicsOpacityEffect;
 class QGraphicsView;
@@ -38,10 +37,12 @@ protected slots:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event)            override;
     void resizeEvent(QResizeEvent *event)          override;
+    void contextMenuEvent(QContextMenuEvent *event)override;
 
     void centerWindow();
     void closeWindow();
     void updateWidgetsPosition();
+    void toggleProtectMode();
 
 private:
     QPoint                   m_oldMousePos;
