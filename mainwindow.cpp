@@ -135,7 +135,7 @@ void MainWindow::adjustWindowSizeBySceneRect()
     if (m_graphicsView->scaleFactor() < 1) {
         QSize screenSize = qApp->screenAt(QCursor::pos())->availableSize();
         QSize sceneSize = m_graphicsView->sceneRect().toRect().size();
-        QSize sceneSizeWithMarigins = sceneSize + QSize(20, 20);
+        QSize sceneSizeWithMarigins = sceneSize + QSize(130, 125);
         if (screenSize.expandedTo(sceneSize) == screenSize) {
             // 通过增加窗口大小来显示图片(当图片大小小于窗口大小但是大于默认窗口大小时候)
             if (screenSize.expandedTo(sceneSize) == screenSize) {
@@ -144,6 +144,7 @@ void MainWindow::adjustWindowSizeBySceneRect()
                 this->resize(screenSize);
             }
             centerWindow();
+            m_graphicsView->resetScale();
         } else {
             showMaximized();
         }
@@ -218,7 +219,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    closeWindow();
+    if (!m_protectMode) {
+        closeWindow();
+    }
 
     return QMainWindow::mouseDoubleClickEvent(event);
 }

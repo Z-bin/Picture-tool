@@ -57,7 +57,7 @@ private:
     NavigatorView           *m_gv;
 
     BottomButtonGroup       *m_bottomButtonGroup;
-
+    bool                     m_protectMode = false;
     bool                     m_clickedOnWindow = false;
 };
 #endif // MAINWINDOW_H
