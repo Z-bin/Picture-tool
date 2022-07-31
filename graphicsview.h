@@ -48,8 +48,6 @@ private:
     void dragMoveEvent(QDragMoveEvent *event)     override;
     void dropEvent(QDropEvent *event)             override;
 
-    void paintEvent(QPaintEvent *event)           override;
-
     /*!
      * @brief 图片是否大于窗口大小
      */

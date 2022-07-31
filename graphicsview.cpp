@@ -21,6 +21,9 @@ GraphicsView::GraphicsView(QWidget *parent)
                   "border-radius: 3px;");
     setAcceptDrops(true);
     setCheckerboardEnabled(false);
+
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &GraphicsView::viewportRectChanged);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &GraphicsView::viewportRectChanged);
 }
 
 void GraphicsView::showFromUrlList(const QList<QUrl> &urlList)
@@ -239,14 +242,6 @@ void GraphicsView::dropEvent(QDropEvent *event)
     } else {
         showText("Not supported mimedata: " + mimeData->formats().first());
     }
-}
-
-void GraphicsView::paintEvent(QPaintEvent *event)
-{
-    if (event->rect() == this->rect() && !isThingSmallerThanWindowWith(transform())) {
-        emit viewportRectChanged();
-    }
-    return QGraphicsView::paintEvent(event);
 }
 
 bool GraphicsView::isThingSmallerThanWindowWith(const QTransform &transform) const
