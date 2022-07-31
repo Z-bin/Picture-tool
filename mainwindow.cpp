@@ -251,8 +251,17 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
        toggleProtectMode();
     });
 
+    QAction *stayOnTopMode = new QAction(tr("Stay on top"));
+    connect(stayOnTopMode, &QAction::triggered, this, [=](){
+        toggleStayOnTop();
+    });
+
+    stayOnTopMode->setCheckable(true);
+    stayOnTopMode->setCheckable(stayOnTop());
+
     protectMode->setCheckable(true);
     protectMode->setChecked(m_protectMode);
+    menu->addAction(stayOnTopMode);
     menu->addAction(protectMode);
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
@@ -291,5 +300,15 @@ void MainWindow::toggleProtectMode()
 {
     m_protectMode = !m_protectMode;
     m_closeButton->setVisible(!m_protectMode);
+}
+
+void MainWindow::toggleStayOnTop()
+{
+    setWindowFlag(Qt::WindowStaysOnTopHint, !stayOnTop());
+}
+
+bool MainWindow::stayOnTop()
+{
+    return windowFlags().testFlag(Qt::WindowStaysOnTopHint);
 }
 

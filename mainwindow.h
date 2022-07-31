@@ -43,6 +43,8 @@ protected slots:
     void closeWindow();
     void updateWidgetsPosition();
     void toggleProtectMode();
+    void toggleStayOnTop();
+    bool stayOnTop();
 
 private:
     QPoint                   m_oldMousePos;
