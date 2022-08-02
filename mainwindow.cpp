@@ -233,8 +233,25 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
     protectMode->setCheckable(true);
     protectMode->setChecked(m_protectMode);
+
+    QAction * helpAction = new QAction(tr("Help"));
+    connect(helpAction, &QAction::triggered, this, [ = ](){
+        QStringList sl {
+            tr("Launch application with image file path as argument to load the file."),
+            tr("Drag and drop image file onto the window is also supported."),
+            "",
+            tr("Context menu option explanation:"),
+            (tr("Stay on top") + " : " + tr("Make window stay on top of all other windows.")),
+            (tr("Protected mode") + " : " + tr("Avoid close window accidentally. (eg. by double clicking the window)"))
+        };
+        m_graphicsView->showText(sl.join('\n'));
+    });
+
+
     menu->addAction(stayOnTopMode);
     menu->addAction(protectMode);
+    menu->addSeparator();
+    menu->addAction(helpAction);
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
 
@@ -277,6 +294,7 @@ void MainWindow::toggleProtectMode()
 void MainWindow::toggleStayOnTop()
 {
     setWindowFlag(Qt::WindowStaysOnTopHint, !stayOnTop());
+    show();
 }
 
 bool MainWindow::stayOnTop()

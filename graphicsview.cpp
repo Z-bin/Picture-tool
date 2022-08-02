@@ -47,7 +47,7 @@ void GraphicsView::showFromUrlList(const QList<QUrl> &urlList)
        QImageReader imageReader(filePath);
        QImage::Format imageFormat = imageReader.imageFormat();
        if (imageFormat == QImage::Format_Invalid) {
-           showText("File not is a valid image");
+           showText(tr("File not is a valid image"));
        } else {
            showImage(QPixmap::fromImageReader(&imageReader));
        }
@@ -233,14 +233,14 @@ void GraphicsView::dropEvent(QDropEvent *event)
         QImage img = qvariant_cast<QImage>(mimeData->imageData());
         QPixmap pixmap = QPixmap::fromImage(img);
         if (pixmap.isNull()) {
-            showText("Image data is invalid");
+            showText(tr("Image data is invalid"));
         } else {
             showImage(pixmap);
         }
     } else if (mimeData->hasText()) {
         showText(mimeData->text());
     } else {
-        showText("Not supported mimedata: " + mimeData->formats().first());
+        showText(tr("Not supported mimedata: %1").arg(mimeData->formats().first()));
     }
 }
 
