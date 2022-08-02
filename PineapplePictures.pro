@@ -22,6 +22,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     navigatorview.cpp \
+    opacityhelper.cpp \
     toolbutton.cpp
 
 HEADERS += \
@@ -30,6 +31,7 @@ HEADERS += \
     graphicsview.h \
     mainwindow.h \
     navigatorview.h \
+    opacityhelper.h \
     toolbutton.h
 
 # Default rules for deployment.

@@ -5,6 +5,8 @@
 #include <QGroupBox>
 #include <QDebug>
 
+class OpacityHelper;
+
 /**
 * @brief 工具箱按钮组
 *
@@ -16,6 +18,7 @@ class BottomButtonGroup : public QGroupBox
 public:
     explicit BottomButtonGroup(QWidget *parent = nullptr);
 
+    void setOpacity(qreal opacity, bool animated = true);
     void addButton(QAbstractButton *button);
 
 signals:
@@ -25,6 +28,9 @@ signals:
     void zoomOutBtnClicked();
     void toggleCheckerboardBtnClicked();
     void rotateRightBtnClicked();
+
+private:
+    OpacityHelper *m_opacityHelper;
 };
 
 #endif // BOTTOMBUTTONGROUP_H

@@ -14,7 +14,6 @@
 #include <QGraphicsScene>
 #include <QApplication>
 #include <QGraphicsTextItem>
-#include <QGraphicsOpacityEffect>
 #include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -99,19 +98,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-
-    m_btnGrpEffect = new QGraphicsOpacityEffect(this);
-    m_bribViewEffect = new QGraphicsOpacityEffect(this);
-    m_bottomButtonGroup->setGraphicsEffect(m_btnGrpEffect);
-    m_gv->setGraphicsEffect(m_bribViewEffect);
-
-    m_btnGrpOpacityAnimation = new QPropertyAnimation(m_btnGrpEffect, "opacity");
-    m_btnGrpOpacityAnimation->setDuration(300);
-    m_bribViewOpacityAnimation = new QPropertyAnimation(m_bribViewEffect, "opacity");
-    m_bribViewOpacityAnimation->setDuration(300);
-
-    m_btnGrpEffect->setOpacity(0);
-    m_bribViewEffect->setOpacity(0);
+    m_bottomButtonGroup->setOpacity(0, false);
+    m_gv->setOpacity(0, false);
+    m_closeButton->setOpacity(0, false);
 
     centerWindow();
 }
@@ -156,36 +145,18 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::enterEvent(QEvent *event)
 {
-    m_btnGrpOpacityAnimation->stop();
-    m_btnGrpOpacityAnimation->setStartValue(m_btnGrpEffect->opacity());
-    m_btnGrpOpacityAnimation->setEndValue(1);
-    m_btnGrpOpacityAnimation->start();
-
-
-    m_bribViewOpacityAnimation->stop();
-    m_bribViewOpacityAnimation->setStartValue(m_bribViewEffect->opacity());
-    m_bribViewOpacityAnimation->setEndValue(1);
-    m_bribViewOpacityAnimation->start();
-
-    m_closeButton->setIconOpacity(1);
+    m_bottomButtonGroup->setOpacity(1);
+    m_gv->setOpacity(1);
+    m_closeButton->setOpacity(1);
 
     return QMainWindow::enterEvent(event);
 }
 
 void MainWindow::leaveEvent(QEvent *event)
 {
-    m_btnGrpOpacityAnimation->stop();
-    m_btnGrpOpacityAnimation->setStartValue(m_btnGrpEffect->opacity());
-    m_btnGrpOpacityAnimation->setEndValue(0);
-    m_btnGrpOpacityAnimation->start();
-
-    m_bribViewOpacityAnimation->stop();
-    m_bribViewOpacityAnimation->setStartValue(m_bribViewEffect->opacity());
-    m_bribViewOpacityAnimation->setEndValue(0);
-    m_bribViewOpacityAnimation->start();
-
-    m_closeButton->setIconOpacity(0);
-
+    m_bottomButtonGroup->setOpacity(0);
+    m_gv->setOpacity(0);
+    m_closeButton->setOpacity(0);
 
     return QMainWindow::leaveEvent(event);
 }

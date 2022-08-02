@@ -1,6 +1,7 @@
 #ifndef NAVIGATORVIEW_H
 #define NAVIGATORVIEW_H
 
+class OpacityHelper;
 class GraphicsView;
 
 #include <QGraphicsView>
@@ -12,6 +13,7 @@ public:
     NavigatorView(QWidget *parent = nullptr);
 
     void setMainView(GraphicsView *mainView);
+    void setOpacity(qreal opacity, bool animated = true);
 
 public slots:
     void updateMainViewportRegion();
@@ -26,7 +28,8 @@ private:
 
     bool m_mouseDown = false;
     QPolygon m_viewportRegion;
-    QGraphicsView *m_mainView = nullptr;
+    QGraphicsView *m_mainView      = nullptr;
+    OpacityHelper *m_opacityHelper = nullptr;
 };
 
 #endif // NAVIGATORVIEW_H
