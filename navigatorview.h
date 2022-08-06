@@ -16,7 +16,7 @@ public:
     void setOpacity(qreal opacity, bool animated = true);
 
 public slots:
-    void updateMainViewportRegion();
+    void updateMainViewportRegion(); // 更新右下角预览框位置
 
 private:
     void mousePressEvent(QMouseEvent *event)   override;
