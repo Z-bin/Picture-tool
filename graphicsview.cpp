@@ -17,6 +17,7 @@ GraphicsView::GraphicsView(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     // 鼠标下方点作为改变视图大小的锚定点
     setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setStyleSheet("background-color: rgba(0, 0, 0, 220);"
                   "border-radius: 3px;");
     setAcceptDrops(true);
@@ -178,7 +179,6 @@ void GraphicsView::mouseReleaseEvent(QMouseEvent *event)
 void GraphicsView::wheelEvent(QWheelEvent *event)
 {
     event->ignore();
-    return QGraphicsView::wheelEvent(event);
 }
 
 void GraphicsView::resizeEvent(QResizeEvent *event)
