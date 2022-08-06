@@ -117,11 +117,11 @@ void MainWindow::showUrls(const QList<QUrl> &urls)
 
 void MainWindow::adjustWindowSizeBySceneRect()
 {
+    QSize sceneSize = m_graphicsView->sceneRect().toRect().size();
+    QSize sceneSizeWithMarigins = sceneSize + QSize(130, 125);
     // 如果通过调整resize来调整缩放
-    if (m_graphicsView->scaleFactor() < 1) {
+    if (m_graphicsView->scaleFactor() < 1 || size().expandedTo(sceneSizeWithMarigins) != size()) {
         QSize screenSize = qApp->screenAt(QCursor::pos())->availableSize();
-        QSize sceneSize = m_graphicsView->sceneRect().toRect().size();
-        QSize sceneSizeWithMarigins = sceneSize + QSize(130, 125);
         if (screenSize.expandedTo(sceneSize) == screenSize) {
             // 通过增加窗口大小来显示图片(当图片大小小于窗口大小但是大于默认窗口大小时候)
             if (screenSize.expandedTo(sceneSize) == screenSize) {
