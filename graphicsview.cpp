@@ -46,6 +46,7 @@ void GraphicsView::showFromUrlList(const QList<QUrl> &urlList)
         showGif(filePath);
     } else {
        QImageReader imageReader(filePath);
+       imageReader.setDecideFormatFromContent(true);
        QImage::Format imageFormat = imageReader.imageFormat();
        if (imageFormat == QImage::Format_Invalid) {
            showText(tr("File not is a valid image"));
