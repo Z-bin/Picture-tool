@@ -164,10 +164,9 @@ void MainWindow::leaveEvent(QEvent *event)
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton) {
+    if (event->buttons() & Qt::LeftButton && !isMaximized()) {
         m_clickedOnWindow = true;
         m_oldMousePos = event->pos();
-        qDebug() << m_oldMousePos;
         event->accept();
     }
 
