@@ -28,6 +28,10 @@ public:
     void showUrls(const QList<QUrl> &urls);
     void adjustWindowSizeBySceneRect();
 
+    void loadGalleryBySingleLocalFile(const QString &path);
+    void galleryPrev();
+    void galleryNext();
+
 protected slots:
     void showEvent(QShowEvent *event)              override;
     void enterEvent(QEvent *event)                 override;
@@ -60,5 +64,8 @@ private:
     BottomButtonGroup       *m_bottomButtonGroup;
     bool                     m_protectMode = false;
     bool                     m_clickedOnWindow = false;
+
+    QList<QUrl>              m_files;
+    int                      m_currentFileIndex = -1;
 };
 #endif // MAINWINDOW_H
