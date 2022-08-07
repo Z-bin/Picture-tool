@@ -46,6 +46,7 @@ protected slots:
     void toggleProtectMode();
     void toggleStayOnTop();
     bool stayOnTop();
+    void quitAppAction(bool force = false);
 
 private:
     QPoint                   m_oldMousePos;

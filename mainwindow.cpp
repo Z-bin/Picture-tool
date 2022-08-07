@@ -15,6 +15,7 @@
 #include <QApplication>
 #include <QGraphicsTextItem>
 #include <QMenu>
+#include <QShortcut>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -102,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomButtonGroup->setOpacity(0, false);
     m_gv->setOpacity(0, false);
     m_closeButton->setOpacity(0, false);
+
+    QShortcut *quitAppShortCut = new QShortcut(QKeySequence(Qt::Key_Space), this);
+    connect(quitAppShortCut, &QShortcut::activated, this, std::bind(&MainWindow::quitAppAction, this, false));
 
     centerWindow();
 }
@@ -192,9 +196,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (!m_protectMode) {
-        closeWindow();
-    }
+    quitAppAction();
 
     return QMainWindow::mouseDoubleClickEvent(event);
 }
@@ -300,5 +302,12 @@ void MainWindow::toggleStayOnTop()
 bool MainWindow::stayOnTop()
 {
     return windowFlags().testFlag(Qt::WindowStaysOnTopHint);
+}
+
+void MainWindow::quitAppAction(bool force)
+{
+    if (!m_protectMode || force) {
+        closeWindow();
+    }
 }
 
