@@ -61,6 +61,13 @@ void GraphicsView::showImage(const QPixmap &pixmap)
     checkAndDoFitInView();
 }
 
+void GraphicsView::showImage(const QImage &image)
+{
+    resetTransform();
+    scene()->showImage(QPixmap::fromImage(image));
+    checkAndDoFitInView();
+}
+
 void GraphicsView::showText(const QString &text)
 {
     resetTransform();

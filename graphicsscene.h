@@ -5,7 +5,7 @@
 
 class GraphicsScene : public QGraphicsScene
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     GraphicsScene(QObject *parent = nullptr);
     ~GraphicsScene();
@@ -14,6 +14,8 @@ public:
     void showText(const QString &text);
     void showSvg(const QString &filepath);
     void showGif(const QString &filepath);
+
+    QPixmap renderToPixmap();
 
 private:
     QGraphicsItem *m_theThing;
