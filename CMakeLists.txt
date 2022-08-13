@@ -2,6 +2,8 @@ project (pineapple-pictures)
 
 cmake_minimum_required(VERSION 3.16)
 
+include (GNUInstallDirs)
+
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_AUTORCC ON)
 set (QT_MINIMUM_VERSION "5.12.5")
@@ -33,12 +35,20 @@ set (PPIC_ORC_FILES
     resources.qrc
 )
 
+set (PPIC_RC_FILES
+    # yeah, it's empty.
+)
+
 set (EXE_NAME ppic)
 
 file (GLOB PPIC_TS_FILE languages/*.ts)
 set (PPIC_CPP_FILE_FOR_I18N ${PPIC_CPP_FILES})
 
 qt5_create_translation(PPIC_QM_FILES ${PPIC_CPP_FILES_FOR_I18N} ${PPIC_TS_FILE})
+
+if (WIN32)
+    list(APPEND PPIC_RC_FILES pineapple-pictures.rc)
+endif ()
 
 add_executable(${EXE_NAME}
     ${PPIC_HEADER_FILES}
@@ -50,16 +60,40 @@ add_executable(${EXE_NAME}
 
 target_link_libraries(${EXE_NAME} Qt5::Widgets Qt5::Svg)
 
-if (UNIX)
+# Extra build settings
+if (WIN32)
+    set_property (
+        TARGET ${EXE_NAME}
+        PROPERTY WIN32_EXECUTABLE true
+    )
+endif ()
+
+macro (ppic_convert_to_relative_path _var)
+    # Make sure _var is a relative path
+    if (IS_ABSOLUTE "${${_var}}")
+        file (RELATIVE_PATH ${_var} "${CMAKE_INSTALL_PREFIX}" "${${_var}}")
+    endif ()
+endmacro ()
+
+
+
+# Install settings
+if (WIN32)
+    # FIXME: try to avoid install to a "bin" subfolder under windows...
+    #        when fixed, don't forget to update the CI config file...
+    set (BIN_INSTALL_DIR "") # seems useless, don't know why...
+elseif (UNIX)
+    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX /usr)
+    endif ()
     if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         set(CMAKE_INSTALL_PREFIX /usr)
     endif()
 
-    # 二进制
-    install (
-        TARGETS ${EXE_NAME}
-        RUNTIME DESTINATION ${CMAKE_IINSTALL_BINDIR}
-        )
+    set (BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}") # relative, usually "bin"
+    ppic_convert_to_relative_path(BIN_INSTALL_DIR)
+    set (LIB_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}") # "lib" or "lib64"
+    ppic_convert_to_relative_path(LIB_INSTALL_DIR)
 
     # 图标
     install (
@@ -73,9 +107,40 @@ if (UNIX)
         FILES  pineapple-pictures.desktop
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications"
      )
-
 endif()
 
+set (INSTALL_TARGETS_DEFAULT_ARGS
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR} COMPONENT Devel
+)
+
+if (WIN32)
+    set (QM_FILE_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/translations")
+else ()
+    set (QM_FILE_INSTALL_DIR "${CMAKE_INSTALL_FULL_DATADIR}/pineapple-pictures/translations")
+endif ()
+
+install (
+    FILES ${PPIC_QM_FILES}
+    DESTINATION ${QM_FILE_INSTALL_DIR}
+)
+
+# CPACK: General Settings
+set (CPACK_GENERATOR "TBZ2")
+set (CPACK_PACKAGE_NAME "PineapplePictures")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Yet another image viewer")
+set (CPACK_PACKAGE_VENDOR "Gary Wang")
+set (CPACK_PACKAGE_CONTACT "https://github.com/Z-bin")
+if (WIN32)
+    # ...
+elseif (APPLE)
+    # ...
+elseif (UNIX)
+    set(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+include(CPack)
 
 
 
