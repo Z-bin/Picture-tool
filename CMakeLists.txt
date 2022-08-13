@@ -53,8 +53,8 @@ endif ()
 add_executable(${EXE_NAME}
     ${PPIC_HEADER_FILES}
     ${PPIC_CPP_FILES}
-    ${PPIC_HEADER_FILES}
     ${PPIC_ORC_FILES}
+    ${PPIC_RC_FILES}
     ${PPIC_QM_FILES}
 )
 
@@ -74,8 +74,6 @@ macro (ppic_convert_to_relative_path _var)
         file (RELATIVE_PATH ${_var} "${CMAKE_INSTALL_PREFIX}" "${${_var}}")
     endif ()
 endmacro ()
-
-
 
 # Install settings
 if (WIN32)
@@ -119,7 +117,10 @@ if (WIN32)
     set (QM_FILE_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/translations")
 else ()
     set (QM_FILE_INSTALL_DIR "${CMAKE_INSTALL_FULL_DATADIR}/pineapple-pictures/translations")
-endif ()
+    target_compile_definitions(${EXE_NAME}
+        PRIVATE QM_FILE_INSTALL_DIR=${QM_FILE_INSTALL_DIR}
+    )
+endif()
 
 install (
     FILES ${PPIC_QM_FILES}
