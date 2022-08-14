@@ -129,7 +129,7 @@ install (
 
 # CPACK: General Settings
 set (CPACK_GENERATOR "TBZ2")
-set (CPACK_PACKAGE_NAME "PineapplePictures")
+set (CPACK_PACKAGE_NAME "pineapple-pictures")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Yet another image viewer")
 set (CPACK_PACKAGE_VENDOR "Gary Wang")
 set (CPACK_PACKAGE_CONTACT "https://github.com/Z-bin")
@@ -138,7 +138,9 @@ if (WIN32)
 elseif (APPLE)
     # ...
 elseif (UNIX)
-    set(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+    set (CPACK_DEBIAN_PACKAGE_DEPENDS "libqt5svg5")
+    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
 endif()
 
 include(CPack)
