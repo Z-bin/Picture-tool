@@ -282,9 +282,9 @@ void GraphicsView::setCheckerboardEnabled(bool enabled)
     m_checkerboardEnabled = enabled;
     if (m_checkerboardEnabled) {
         QPixmap tilePixmap(0x20, 0x20);
-        tilePixmap.fill(QColor(30, 30, 30, 100));
+        tilePixmap.fill(QColor(30, 30, 30, 170));
         QPainter tilePainter(&tilePixmap);
-        QColor color(40, 40, 40, 100);
+        QColor color(45, 45, 45, 170);
         tilePainter.fillRect(0, 0, 0x10, 0x10, color);
         tilePainter.fillRect(0x10, 0x10, 0x10, 0x10, color);
         tilePainter.end();
