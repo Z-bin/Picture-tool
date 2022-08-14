@@ -41,8 +41,7 @@ void GraphicsView::showFileFromUrl(const QUrl &url, bool doRequestGallery)
        QImageReader imageReader(filePath);
        imageReader.setAutoTransform(true);
        imageReader.setDecideFormatFromContent(true);
-       QImage::Format imageFormat = imageReader.imageFormat();
-       if (imageFormat == QImage::Format_Invalid) {
+       if (imageReader.format().isEmpty()) {
            showText(tr("File not is a valid image"));
        } else {
            showImage(QPixmap::fromImageReader(&imageReader));
