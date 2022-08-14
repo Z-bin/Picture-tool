@@ -125,6 +125,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nextPictureShorucut, &QShortcut::activated,
             this, &MainWindow::galleryNext);
 
+    QShortcut * fullscreenShorucut = new QShortcut(QKeySequence(QKeySequence::FullScreen), this);
+    connect(fullscreenShorucut, &QShortcut::activated,
+            this, &MainWindow::toggleFullscreen);
+
     centerWindow();
 }
 
@@ -459,6 +463,15 @@ void MainWindow::quitAppAction(bool force)
 {
     if (!m_protectMode || force) {
         closeWindow();
+    }
+}
+
+void MainWindow::toggleFullscreen()
+{
+    if (isFullScreen()) {
+        showNormal();
+    } else {
+        showFullScreen();
     }
 }
 
