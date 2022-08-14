@@ -29,6 +29,7 @@ public:
     void adjustWindowSizeBySceneRect();
     QUrl currentImageFileUrl();
 
+    void clearGallery();
     void loadGalleryBySingleLocalFile(const QString &path);
     void galleryPrev();
     void galleryNext();

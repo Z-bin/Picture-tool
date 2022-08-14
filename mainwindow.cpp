@@ -113,6 +113,10 @@ MainWindow::MainWindow(QWidget *parent)
     QShortcut *quitAppShortCut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(quitAppShortCut, &QShortcut::activated, this, std::bind(&MainWindow::quitAppAction, this, false));
 
+    QShortcut *quitAppShortCut2 = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+    connect(quitAppShortCut2, &QShortcut::activated, this, std::bind(&MainWindow::quitAppAction, this, false));
+
+
     QShortcut * prevPictureShorucut = new QShortcut(QKeySequence(Qt::Key_PageUp), this);
     connect(prevPictureShorucut, &QShortcut::activated,
             this, &MainWindow::galleryPrev);
@@ -176,6 +180,12 @@ QUrl MainWindow::currentImageFileUrl()
     return QUrl();
 }
 
+void MainWindow::clearGallery()
+{
+    m_currentFileIndex = -1;
+    m_files.clear();
+}
+
 void MainWindow::loadGalleryBySingleLocalFile(const QString &path)
 {
     QFileInfo info(path);
@@ -189,8 +199,7 @@ void MainWindow::loadGalleryBySingleLocalFile(const QString &path)
 
     std::sort(entryList.begin(), entryList.end(), collator);
 
-    m_currentFileIndex = -1;
-    m_files.clear();
+    clearGallery();
 
     for (int i = 0; i < entryList.count(); i++) {
         const QString &oneEntry = entryList.at(i);
@@ -342,7 +351,8 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
     QAction *pasteImage = new QAction(tr("&Paste Image"));
     connect(pasteImage, &QAction::triggered, this, [=](){
-       m_graphicsView->showImage(clipboardImage);
+        clearGallery();
+        m_graphicsView->showImage(clipboardImage);
     });
 
     QAction *pasteImageFile = new QAction(tr("&Paste Image File"));
