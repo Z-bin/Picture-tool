@@ -28,6 +28,7 @@ public:
     void zoomView(qreal scaleFactor);
     void resetScale();
     void rotateView(qreal rotateAngle);
+    void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode = Qt::IgnoreAspectRatio);
 
     void checkAndDoFitInView();
 
@@ -57,6 +58,7 @@ private:
     bool shouldIgnoreMousePressMoveEvent(const QMouseEvent *event) const;
 
     void setCheckerboardEnabled(bool enabled);
+    void applyTransformationModeByScaleFactor();
 
     void resetWithScaleAndRotate(qreal scaleFactor, qreal rotateAngle);
 
