@@ -336,10 +336,19 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MainWindow::wheelEvent(QWheelEvent *event)
 {
-    if (event->delta() > 0) {
-        m_graphicsView->zoomView(1.25);
+    QPoint numDegress = event->angleDelta() / 8;
+    bool needZoom = false, zoomIn = false;
+    // 在X11上QWheelEvent::pixelDelta()可能会失效
+    if (!numDegress.isNull() && numDegress.y() != 0) {
+        needZoom = true;
+        zoomIn = numDegress.y() > 0;
+    }
+
+    if (needZoom) {
+        m_graphicsView->zoomView(zoomIn ? 1.25 : 0.8);
+        event->accept();
     } else {
-        m_graphicsView->zoomView(0.8);
+        QMainWindow::wheelEvent(event);
     }
 }
 
