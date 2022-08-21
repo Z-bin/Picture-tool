@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 设置为无边框
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
-    this->setMinimumSize(710, 530);
+    this->setMinimumSize(350, 350);
     this->setWindowIcon(QIcon(":/icons/app-icon.svg"));
     this->setMouseTracking(true);
 
@@ -185,13 +185,11 @@ void MainWindow::adjustWindowSizeBySceneRect()
         QSize screenSize = qApp->screenAt(QCursor::pos())->availableSize();
         if (screenSize.expandedTo(sceneSize) == screenSize) {
             // 通过增加窗口大小来显示图片(当图片大小小于窗口大小但是大于默认窗口大小时候)
-            if (screenSize.expandedTo(sceneSize) == screenSize) {
-                this->resize(sceneSizeWithMarigins);
-            } else {
-                this->resize(screenSize);
-            }
-            centerWindow();
+            QSize finalSize = (screenSize.expandedTo(sceneSizeWithMarigins) == screenSize) ?
+                              sceneSizeWithMarigins : screenSize;
+            this->resize(finalSize.expandedTo(this->sizeHint()));
             m_graphicsView->resetScale();
+            centerWindow();
         } else {
             showMaximized();
         }
@@ -460,6 +458,11 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
     menu->deleteLater();
 
     return QMainWindow::contextMenuEvent(event);
+}
+
+QSize MainWindow::sizeHint() const
+{
+    return QSize(350, 350);
 }
 
 void MainWindow::centerWindow()
