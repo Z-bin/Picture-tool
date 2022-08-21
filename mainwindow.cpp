@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setMinimumSize(710, 530);
     this->setWindowIcon(QIcon(":/icons/app-icon.svg"));
+    this->setMouseTracking(true);
 
     // 与窗口透明度属性绑定
     m_fadeOutAnimation = new QPropertyAnimation(this, "windowOpacity");
@@ -73,12 +74,28 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_graphicsView, &GraphicsView::requestGallery,
             this, &MainWindow::loadGalleryBySingleLocalFile);
 
-    m_closeButton = new ToolButton(m_graphicsView);
+    m_closeButton = new ToolButton(true, m_graphicsView);
     m_closeButton->setIcon(QIcon(":/icons/window-close"));
     m_closeButton->setIconSize(QSize(50, 50));
 
     connect(m_closeButton, &QPushButton::clicked,
             this, &MainWindow::closeWindow);
+
+    m_prevButton = new ToolButton(false, m_graphicsView);
+    m_prevButton->setIcon(QIcon(":/icons/go-previous"));
+    m_prevButton->setIconSize(QSize(75, 75));
+    m_prevButton->setVisible(false);
+    m_prevButton->setOpacity(0, false);
+    m_nextButton = new ToolButton(false, m_graphicsView);
+    m_nextButton->setIcon(QIcon(":/icons/go-next"));
+    m_nextButton->setIconSize(QSize(75, 75));
+    m_nextButton->setVisible(false);
+    m_nextButton->setOpacity(0, false);
+
+    connect(m_prevButton, &QAbstractButton::clicked,
+            this, &MainWindow::galleryPrev);
+    connect(m_nextButton, &QAbstractButton::clicked,
+            this, &MainWindow::galleryNext);
 
     m_bottomButtonGroup = new BottomButtonGroup(this);
 
@@ -109,6 +126,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_bottomButtonGroup->setOpacity(0, false);
     m_gv->setOpacity(0, false);
     m_closeButton->setOpacity(0, false);
+
+    connect(this, &MainWindow::galleryLoaded, this, [this]() {
+        m_prevButton->setVisible(isGalleryAvailable());
+        m_nextButton->setVisible(isGalleryAvailable());
+    });
 
     QShortcut *quitAppShortCut = new QShortcut(QKeySequence(Qt::Key_Space), this);
     connect(quitAppShortCut, &QShortcut::activated, this, std::bind(&MainWindow::quitAppAction, this, false));
@@ -212,12 +234,14 @@ void MainWindow::loadGalleryBySingleLocalFile(const QString &path)
             m_currentFileIndex = i;
         }
     }
+
+    emit galleryLoaded();
 }
 
 void MainWindow::galleryPrev()
 {
     int count = m_files.count();
-    if (m_currentFileIndex < 0 || m_files.isEmpty() || m_currentFileIndex >= m_files.count()) {
+    if (!isGalleryAvailable()) {
         return;
     }
 
@@ -228,13 +252,21 @@ void MainWindow::galleryPrev()
 void MainWindow::galleryNext()
 {
     int count = m_files.count();
-    if (m_currentFileIndex < 0 || m_files.isEmpty() || m_currentFileIndex >= m_files.count()) {
+    if (!isGalleryAvailable()) {
         return;
     }
 
     m_currentFileIndex = m_currentFileIndex + 1 == count ? 0 : m_currentFileIndex + 1;
 
     m_graphicsView->showFileFromUrl(m_files.at(m_currentFileIndex), false);
+}
+
+bool MainWindow::isGalleryAvailable()
+{
+    if (m_currentFileIndex < 0 || m_files.isEmpty() || m_currentFileIndex >= m_files.count()) {
+        return false;
+    }
+    return true;
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -247,7 +279,10 @@ void MainWindow::enterEvent(QEvent *event)
 {
     m_bottomButtonGroup->setOpacity(1);
     m_gv->setOpacity(1);
+
     m_closeButton->setOpacity(1);
+    m_prevButton->setOpacity(1);
+    m_nextButton->setOpacity(1);
 
     return QMainWindow::enterEvent(event);
 }
@@ -256,7 +291,10 @@ void MainWindow::leaveEvent(QEvent *event)
 {
     m_bottomButtonGroup->setOpacity(0);
     m_gv->setOpacity(0);
+
     m_closeButton->setOpacity(0);
+    m_prevButton->setOpacity(0);
+    m_nextButton->setOpacity(0);
 
     return QMainWindow::leaveEvent(event);
 }
@@ -437,6 +475,9 @@ void MainWindow::closeWindow()
 void MainWindow::updateWidgetsPosition()
 {
     m_closeButton->move(width() - m_closeButton->width(), 0);
+    m_prevButton->move(25, (height() - m_prevButton->height()) / 2);
+    m_nextButton->move(width() - m_nextButton->width() - 25,
+                       (height() - m_prevButton->height()) / 2);
     m_bottomButtonGroup->move((width() - m_bottomButtonGroup->width()) / 2,
                               height() - m_bottomButtonGroup->height());
     m_gv->move(width() - m_gv->width(), height() - m_gv->height());
@@ -446,6 +487,8 @@ void MainWindow::toggleProtectMode()
 {
     m_protectMode = !m_protectMode;
     m_closeButton->setVisible(!m_protectMode);
+    m_prevButton->setVisible(!m_protectMode);
+    m_nextButton->setVisible(!m_protectMode);
 }
 
 void MainWindow::toggleStayOnTop()
