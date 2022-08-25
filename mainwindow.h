@@ -61,6 +61,7 @@ protected slots:
     bool stayOnTop();
     void quitAppAction(bool force = false);
     void toggleFullscreen(); // 全屏/正常
+    void toggleMaximize();
 
 private:
     QPoint                   m_oldMousePos;

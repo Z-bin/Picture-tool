@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 
+#include "settings.h"
 #include "toolbutton.h"
 
 #include "bottombuttongroup.h"
@@ -24,8 +25,11 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    // 设置为无边框
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    if (Settings::instance()->alwaysOnTop()) {
+        this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    } else {
+        this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    }
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setMinimumSize(350, 350);
     this->setWindowIcon(QIcon(":/icons/app-icon.svg"));
@@ -115,13 +119,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_gv->setVisible(false);
     });
     connect(m_bottomButtonGroup, &BottomButtonGroup::toggleWindowMaximum,
-            this, [=](){
-        if (isMaximized()) {
-           showNormal();
-        } else {
-            showMaximized();
-        }
-    });
+            this, &MainWindow::toggleMaximize);
 
     m_bottomButtonGroup->setOpacity(0, false);
     m_gv->setOpacity(0, false);
@@ -310,7 +308,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::LeftButton && m_clickedOnWindow) {
+    if (event->buttons() & Qt::LeftButton && m_clickedOnWindow && !isMaximized()) {
         move(event->globalPos() - m_oldMousePos);
         event->accept();
     }
@@ -327,9 +325,18 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    quitAppAction();
-
-    return QMainWindow::mouseDoubleClickEvent(event);
+    switch (Settings::instance()->doubleClickBehavior()) {
+    case ActionCloseWindow:
+        quitAppAction();
+        event->accept();
+        break;
+    case ActionMaximizeWindow:
+        toggleMaximize();
+        event->accept();
+        break;
+    case ActionDoNothing:
+        break;
+    }
 }
 
 void MainWindow::wheelEvent(QWheelEvent *event)
@@ -527,6 +534,15 @@ void MainWindow::toggleFullscreen()
         showNormal();
     } else {
         showFullScreen();
+    }
+}
+
+void MainWindow::toggleMaximize()
+{
+    if (isMaximized()) {
+        showNormal();
+    } else {
+        showMaximized();
     }
 }
 
