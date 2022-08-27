@@ -7,6 +7,7 @@
 #include "graphicsview.h"
 #include "navigatorview.h"
 #include "graphicsscene.h"
+#include "settingsdialog.h"
 
 #include <QScreen>
 #include <QDebug>
@@ -25,7 +26,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    if (Settings::instance()->alwaysOnTop()) {
+    if (Settings::instance()->stayOnTop()) {
         this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     } else {
         this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
@@ -432,6 +433,13 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
     protectMode->setCheckable(true);
     protectMode->setChecked(m_protectMode);
 
+    QAction *toggleSettings = new QAction(tr("Configure..."));
+    connect(toggleSettings, &QAction::triggered, this, [=]() {
+        SettingsDialog *sd = new SettingsDialog(this);
+        sd->exec();
+        sd->deleteLater();
+    });
+
     QAction * helpAction = new QAction(tr("Help"));
     connect(helpAction, &QAction::triggered, this, [ = ](){
         QStringList sl {
@@ -460,6 +468,7 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
     menu->addAction(stayOnTopMode);
     menu->addAction(protectMode);
     menu->addSeparator();
+    menu->addAction(toggleSettings);
     menu->addAction(helpAction);
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
