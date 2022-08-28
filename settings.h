@@ -1,5 +1,4 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#pragma once
 
 #include <QObject>
 #include <QSettings>
@@ -34,4 +33,3 @@ private:
     static Settings *m_settings_instance;
     QSettings *m_qsettings;
 };
-#endif
