@@ -42,6 +42,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
 
     setMinimumSize(200, 50);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
 SettingsDialog::~SettingsDialog()
